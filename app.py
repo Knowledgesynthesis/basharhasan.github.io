@@ -65,7 +65,7 @@ def get_risk_probability(score, prob_data):
         return "Score out of range."
 
 # Streamlit app
-st.title("5-Year Recurrence/Metastasis Risk Prediction")
+st.title("5-Year HCC Recurrence/Metastasis Risk Prediction")
 
 st.header("Input Parameters")
 who_grade = st.selectbox("WHO Grade", [1, 2, 3])
