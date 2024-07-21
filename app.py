@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # Probability data for risk scores
 data = {
@@ -85,12 +84,3 @@ risk_probability = get_risk_probability(risk_score, prob_data)
 st.header("Calculated Risk Score and Probability")
 st.write(f"Calculated Risk Score: {risk_score}")
 st.write(f"Associated Risk Probability: {risk_probability}")
-
-# Generate and display the distribution plot
-st.header("Distribution of Risk Scores")
-plt.figure(figsize=(10, 6))
-plt.hist(prob_data['Risk Score'], bins=30, edgecolor='black')
-plt.xlabel('Risk Score')
-plt.ylabel('Number of Cases')
-plt.title('Distribution of Risk Scores')
-st.pyplot(plt)  # Ensure this is called only once
