@@ -39,7 +39,7 @@ def calculate_risk_score(who_grade, t_stage, hepar, gpc, nuclear_area, r_rpa):
         score += 12
     
     # Hepar and GPC
-    if hepar == 'Low' or gpc == 'Positive':
+    if hepar == 'low' or gpc == '+':
         score += 1
     
     # Nuclear Area Percentage
@@ -70,8 +70,8 @@ st.title("5-Year HCC Recurrence/Metastasis Risk Prediction")
 st.header("Input Parameters")
 who_grade = st.selectbox("WHO Grade", [1, 2, 3])
 t_stage = st.selectbox("T Stage", [1, 2, 3, 4])
-hepar = st.selectbox("Hepar", ['High', 'Low'])
-gpc = st.selectbox("GPC", ['Positive', 'Negative'])
+hepar = st.selectbox("Hepar", ['high', 'low'])
+gpc = st.selectbox("GPC", ['+', '-'])
 nuclear_area = st.slider("Nuclear Area %", 0.0, 100.0, 0.0, 1.0)
 r_rpa = st.slider("r-RPA %", 0.0, 100.0, 0.0, 1.0)
 
