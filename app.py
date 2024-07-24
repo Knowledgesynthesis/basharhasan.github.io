@@ -83,5 +83,5 @@ risk_probability_5yr = get_risk_probability(risk_score, prob_data, 5)
 
 st.header("Calculated Risk Score and Probability")
 st.write(f"Calculated Risk Score: {risk_score}")
-st.write(f"Associated 3-year rec-met Risk Probability: {risk_probability_3yr}")
-st.write(f"Associated 5-year rec-met Risk Probability: {risk_probability_5yr}")
+st.write(f"Associated 3-year rec-met Risk Probability: {risk_probability_3yr}%")
+st.write(f"Associated 5-year rec-met Risk Probability: {risk_probability_5yr}%")
