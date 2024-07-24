@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 # Probability data for risk scores
 data = {
@@ -85,3 +86,17 @@ st.header("Calculated Risk Score and Probability")
 st.write(f"Calculated Risk Score: {risk_score}")
 st.write(f"Associated 3-year rec-met Risk Probability: {risk_probability_3yr}%")
 st.write(f"Associated 5-year rec-met Risk Probability: {risk_probability_5yr}%")
+
+# Plotting
+st.header("Risk Probability Plot")
+prob_data_melted = prob_data.melt('Risk Score', var_name='Year', value_name='Probability')
+
+chart = alt.Chart(prob_data_melted).mark_line().encode(
+    x='Risk Score',
+    y='Probability',
+    color='Year'
+).properties(
+    title='3-Year and 5-Year Recurrence/Metastasis Risk Probability'
+)
+
+st.altair_chart(chart, use_container_width=True)
