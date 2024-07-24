@@ -37,6 +37,7 @@ data = {
         99.1, 99.2, 99.3, 99.4
     ]
 }
+
 prob_data = pd.DataFrame(data)
 
 # Define the scoring function
