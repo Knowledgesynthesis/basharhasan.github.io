@@ -4,21 +4,29 @@ import pandas as pd
 # Probability data for risk scores
 data = {
     'Risk Score': list(range(-20, 49)),
-    'Predicted Probability of Recmet (%)': [
-        14.7486258, 16.09498237, 17.53895821, 19.08301786, 20.7288399,
-        22.47717703, 24.32772007, 26.27897222, 28.32814063, 30.47105259,
-        32.70210384, 35.01424563, 37.39901584, 39.846618, 42.34604897,
-        44.88527378, 47.45144292, 50.03114428, 52.61067983, 55.17635509,
-        57.71476835, 60.21308686, 62.65929819, 65.04242641, 67.35270594,
-        69.58170804, 71.72241859, 73.76926821, 75.71811824, 77.56620818,
-        79.31207124, 80.95542541, 82.49704735, 83.93863624, 85.28267387,
-        86.53228617, 87.69111062, 88.76317258, 89.75277281, 90.66438746,
-        91.50258111, 92.27193268, 92.97697389, 93.62213925, 94.21172666,
-        94.74986736, 95.24050421, 95.68737688, 96.09401308, 96.46372463,
-        96.79960751, 97.10454513, 97.38121393, 97.63209091, 97.85946242,
-        98.06543386, 98.25193991, 98.42075499, 98.57350383, 98.71167178,
-        98.83661497, 98.94957, 99.05166326, 99.14391974, 99.2272713,
-        99.30256449, 99.3705678, 99.43197838, 99.48742835
+    'Predicted 3-Year Probability of Recmet (%)': [
+        6.9, 7.6, 8.4, 9.4, 10.4, 11.4, 12.6, 13.9, 15.3, 16.9, 18.5, 20.3,
+        22.1, 24.1, 26.3, 28.5, 30.9, 33.3, 35.9, 38.5, 41.2, 44, 46.7, 49.6,
+        52.4, 55.2, 57.9, 60.7, 63.3, 65.9, 68.4, 70.8, 73, 75.2, 77.2, 79.2,
+        81, 82.6, 84.2, 85.6, 87, 88.2, 89.3, 90.3, 91.3, 92.1, 92.9, 93.6, 94.3,
+        94.8, 95.4, 95.8, 96.3, 96.7, 97, 97.3, 97.6, 97.8, 98.1, 98.3, 98.5,
+        98.6, 98.8, 98.9, 99, 99.1, 99.2, 99.3, 99.4
+    ],
+    'Predicted 5-Year Probability of Recmet (%)': [
+        14.7, 16.1, 17.5, 19.1, 20.7,
+    22.5, 24.3, 26.3, 28.3, 30.5,
+    32.7, 35.0, 37.4, 39.8, 42.3,
+    44.9, 47.5, 50.0, 52.6, 55.2,
+    57.7, 60.2, 62.7, 65.0, 67.4,
+    69.6, 71.7, 73.8, 75.7, 77.6,
+    79.3, 81.0, 82.5, 83.9, 85.3,
+    86.5, 87.7, 88.8, 89.8, 90.7,
+    91.5, 92.3, 93.0, 93.6, 94.2,
+    94.7, 95.2, 95.7, 96.1, 96.5,
+    96.8, 97.1, 97.4, 97.6, 97.8,
+    98.1, 98.3, 98.5, 98.6, 98.8,
+    98.9, 99.0, 99.1, 99.2, 99.3,
+    99.4
     ]
 }
 prob_data = pd.DataFrame(data)
@@ -57,15 +65,17 @@ def calculate_risk_score(who_grade, t_stage, hepar, gpc, nuclear_area, r_rpa):
 
     return score
 
-# Define the function to get the associated risk
-def get_risk_probability(score, prob_data):
+# Define the function to get the associated risk probabilities
+def get_risk_probabilities(score, prob_data):
     if score in prob_data['Risk Score'].values:
-        return prob_data[prob_data['Risk Score'] == score]['Predicted Probability of Recmet (%)'].values[0]
+        prob_3yr = prob_data[prob_data['Risk Score'] == score]['Predicted 3-Year Probability of Recmet (%)'].values[0]
+        prob_5yr = prob_data[prob_data['Risk Score'] == score]['Predicted 5-Year Probability of Recmet (%)'].values[0]
+        return prob_3yr, prob_5yr
     else:
-        return "Score out of range."
+        return "Score out of range.", "Score out of range."
 
 # Streamlit app
-st.title("5-Year HCC Recurrence/Metastasis Risk Prediction")
+st.title("HCC Recurrence/Metastasis Risk Prediction")
 
 st.header("Input Parameters")
 who_grade = st.selectbox("WHO Grade", [1, 2, 3])
@@ -78,9 +88,10 @@ r_rpa = st.slider("r-RPA %", 0.0, 100.0, 0.0, 1.0)
 # Calculate the risk score
 risk_score = calculate_risk_score(who_grade, t_stage, hepar, gpc, nuclear_area, r_rpa)
 
-# Get the associated risk probability
-risk_probability = get_risk_probability(risk_score, prob_data)
+# Get the associated risk probabilities
+risk_probability_3yr, risk_probability_5yr = get_risk_probabilities(risk_score, prob_data)
 
 st.header("Calculated Risk Score and Probability")
 st.write(f"Calculated Risk Score: {risk_score}")
-st.write(f"Associated Risk Probability: {risk_probability}")
+st.write(f"Associated 3-Year Rec-Met Risk Probability: {risk_probability_3yr}")
+st.write(f"Associated 5-Year Rec-Met Risk Probability: {risk_probability_5yr}")
