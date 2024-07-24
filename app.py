@@ -91,12 +91,34 @@ st.write(f"Associated 5-year rec-met Risk Probability: {risk_probability_5yr}%")
 st.header("Risk Probability Plot")
 prob_data_melted = prob_data.melt('Risk Score', var_name='Year', value_name='Probability')
 
-chart = alt.Chart(prob_data_melted).mark_line().encode(
+base = alt.Chart(prob_data_melted).mark_line().encode(
     x='Risk Score',
     y='Probability',
     color='Year'
 ).properties(
     title='3-Year and 5-Year Recurrence/Metastasis Risk Probability'
 )
+
+dot_3yr = alt.Chart(pd.DataFrame({
+    'Risk Score': [risk_score],
+    'Probability': [risk_probability_3yr],
+    'Year': ['3-Year']
+})).mark_point(size=100, color='blue').encode(
+    x='Risk Score',
+    y='Probability',
+    tooltip=['Risk Score', 'Probability']
+)
+
+dot_5yr = alt.Chart(pd.DataFrame({
+    'Risk Score': [risk_score],
+    'Probability': [risk_probability_5yr],
+    'Year': ['5-Year']
+})).mark_point(size=100, color='red').encode(
+    x='Risk Score',
+    y='Probability',
+    tooltip=['Risk Score', 'Probability']
+)
+
+chart = base + dot_3yr + dot_5yr
 
 st.altair_chart(chart, use_container_width=True)
