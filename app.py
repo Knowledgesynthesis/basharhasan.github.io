@@ -103,7 +103,7 @@ dot_3yr = alt.Chart(pd.DataFrame({
     'Risk Score': [risk_score],
     'Probability': [risk_probability_3yr],
     'Year': ['3-Year']
-})).mark_point(size=100, color='blue').encode(
+})).mark_point(size=100, color='yellow').encode(
     x='Risk Score',
     y='Probability',
     tooltip=['Risk Score', 'Probability']
