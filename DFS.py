@@ -12,7 +12,7 @@ data = {
 prob_data = pd.DataFrame(data)
 
 # Define the scoring function with the updated user-friendly interface
-def calculate_risk_score(who_grade, tstage, multifocality, nuclear_area, r_rpa, hepar_gpc_catv2):
+def calculate_risk_score(who_grade, tstage, multifocality, nuclear_area, r_rpa, hepar, gpc):
     score = 0
     # WHO Grade
     score += {1: 0, 2: 4, 3: 24}.get(who_grade, 0)
@@ -31,8 +31,13 @@ def calculate_risk_score(who_grade, tstage, multifocality, nuclear_area, r_rpa, 
         score += 9
     # R-RPA adjusted to the nearest integer
     score += -2 * round(int(r_rpa) / 10)
-    # Hepar/GPC
-    score += {1: 0, 2: 1, 3: 1}.get(hepar_gpc_catv2, 0)
+    # Hepar/GPC calculation
+    if hepar == "high" and gpc == "negative":
+        score += 0
+    elif (hepar == "high" and gpc == "positive") or (hepar == "low" and gpc == "negative"):
+        score += 1
+    elif hepar == "low" and gpc == "positive":
+        score += 1
     
     return score
 
@@ -58,10 +63,11 @@ tstage = st.selectbox("T Stage", [1, 2, 3, 4])
 multifocality = st.selectbox("Multifocality", ["No", "Yes"]) == "Yes"
 nuclear_area = st.slider("Mean Nuclear Area %", 0.0, 100.0, 0.0, 1.0)
 r_rpa = st.slider("r-RPA %", 0, 100, 0, 1)
-hepar_gpc_catv2 = st.selectbox("Hepar/GPC Category", [1, 2, 3])
+hepar = st.selectbox("Hepar", ["high", "low"])
+gpc = st.selectbox("GPC", ["negative", "positive"])
 
 # Calculate the risk score
-risk_score = calculate_risk_score(who_grade, tstage, multifocality, nuclear_area, r_rpa, hepar_gpc_catv2)
+risk_score = calculate_risk_score(who_grade, tstage, multifocality, nuclear_area, r_rpa, hepar, gpc)
 
 # Get the associated risk and survival probabilities
 risk_3yr, risk_5yr, dfs_3yr, dfs_5yr = get_risk_probabilities(risk_score, prob_data)
@@ -128,7 +134,7 @@ dot_3yr_dfs = alt.Chart(pd.DataFrame({
 })).mark_point(size=100, color='yellow').encode(
     x='Risk Score',
     y='DFS Probability',
-    tooltip=['Risk Score', 'DFS Probability']
+tooltip=['Risk Score', 'DFS Probability']
 )
 
 dot_5yr_dfs = alt.Chart(pd.DataFrame({
