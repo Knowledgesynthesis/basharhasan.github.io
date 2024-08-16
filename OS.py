@@ -93,34 +93,36 @@ dot_5yr_risk = alt.Chart(pd.DataFrame({
 chart_risk = base_risk + dot_3yr_risk + dot_5yr_risk
 st.altair_chart(chart_risk, use_container_width=True)
 
+# Create a new column for survival probabilities
+prob_data_melted['Survival Probability'] = 100 - prob_data_melted['Probability']
+
 # Plot for Overall Survival
-prob_data_melted['Probability'] = 100 - prob_data_melted['Probability']
 base_survival = alt.Chart(prob_data_melted[prob_data_melted['Year'].str.contains('Death')]).mark_line().encode(
-    x='risk_score',
-    y='Probability',
+    x='Risk Score',  # Ensure the column name matches your DataFrame
+    y='Survival Probability',
     color='Year'
 ).properties(
     title='3-Year and 5-Year Overall Survival Probability'
 )
 
 dot_3yr_survival = alt.Chart(pd.DataFrame({
-    'risk_score': [risk_score],
-    'Probability': [survival_3yr],
+    'Risk Score': [risk_score],
+    'Survival Probability': [survival_3yr],
     'Year': ['3-Year Survival']
 })).mark_point(size=100, color='yellow').encode(
-    x='risk_score',
-    y='Probability',
-    tooltip=['risk_score', 'Probability']
+    x='Risk Score',
+    y='Survival Probability',
+    tooltip=['Risk Score', 'Survival Probability']
 )
 
 dot_5yr_survival = alt.Chart(pd.DataFrame({
-    'risk_score': [risk_score],
-    'Probability': [survival_5yr],
+    'Risk Score': [risk_score],
+    'Survival Probability': [survival_5yr],
     'Year': ['5-Year Survival']
 })).mark_point(size=100, color='red').encode(
-    x='risk_score',
-    y='Probability',
-    tooltip=['risk_score', 'Probability']
+    x='Risk Score',
+    y='Survival Probability',
+    tooltip=['Risk Score', 'Survival Probability']
 )
 
 chart_survival = base_survival + dot_3yr_survival + dot_5yr_survival
