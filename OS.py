@@ -24,10 +24,9 @@ def calculate_risk_score(study_grade_who, tstage, cirrhosis, portal_hyp, hepar_g
 
 # Define the function to get the associated risk probabilities
 def get_risk_probabilities(score, prob_data):
-    row = prob_data[prob_data['risk_score'] == score]
-    if not row.empty:
-        risk_3yr = row['Predicted Probability of 3-Year Death (%)'].values[0]
-        risk_5yr = row['Predicted Probability of 5-Year Death (%)'].values[0]
+    if score in prob_data['Risk Score'].values:
+        risk_3yr = prob_data[prob_data['Risk Score'] == score]['Predicted 3-Year Probability of Death (%)'].values[0]
+        risk_5yr = prob_data[prob_data['Risk Score'] == score]['Predicted 5-Year Probability of Death (%)'].values[0]
         survival_3yr = 100 - risk_3yr
         survival_5yr = 100 - risk_5yr
         return risk_3yr, risk_5yr, survival_3yr, survival_5yr
@@ -60,11 +59,11 @@ st.write(f"Associated 5-year Overall Survival Probability: {survival_5yr}%")
 
 # Plotting
 st.header("Risk Probability Plot")
-prob_data_melted = prob_data.melt('risk_score', var_name='Year', value_name='Probability')
+prob_data_melted = prob_data.melt('Risk Score', var_name='Year', value_name='Probability')
 
 # Plot for Death Risk
 base_risk = alt.Chart(prob_data_melted[prob_data_melted['Year'].str.contains('Death')]).mark_line().encode(
-    x='risk_score',
+    x='Risk Score',
     y='Probability',
     color='Year'
 ).properties(
@@ -72,23 +71,23 @@ base_risk = alt.Chart(prob_data_melted[prob_data_melted['Year'].str.contains('De
 )
 
 dot_3yr_risk = alt.Chart(pd.DataFrame({
-    'risk_score': [risk_score],
+    'Risk Score': [risk_score],
     'Probability': [risk_3yr],
     'Year': ['3-Year Death Risk']
 })).mark_point(size=100, color='yellow').encode(
-    x='risk_score',
+    x='Risk Score',
     y='Probability',
-    tooltip=['risk_score', 'Probability']
+    tooltip=['Risk Score', 'Probability']
 )
 
 dot_5yr_risk = alt.Chart(pd.DataFrame({
-    'risk_score': [risk_score],
+    'Risk Score': [risk_score],
     'Probability': [risk_5yr],
     'Year': ['5-Year Death Risk']
 })).mark_point(size=100, color='red').encode(
-    x='risk_score',
+    x='Risk Score',
     y='Probability',
-    tooltip=['risk_score', 'Probability']
+    tooltip=['Risk Score', 'Probability']
 )
 
 chart_risk = base_risk + dot_3yr_risk + dot_5yr_risk
