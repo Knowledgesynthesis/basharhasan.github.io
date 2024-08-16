@@ -11,41 +11,41 @@ data = {
 
 prob_data = pd.DataFrame(data)
 
-# Define the scoring function
-def calculate_risk_score(study_grade_who, tstage, cirrhosis, portal_hyp, hepar_gpc_catv2, r_rpa):
+# Define the scoring function with the updated user-friendly interface
+def calculate_risk_score(who_grade, tstage, cirrhosis, portal_hyp, hepar, gpc, r_rpa):
     score = 0
-    score += {1: 0, 2: 11, 3: 34}.get(study_grade_who, 0)
+    score += {1: 0, 2: 11, 3: 34}.get(who_grade, 0)
     score += {1: 0, 2: 0, 3: 9, 4: 16}.get(tstage, 0)
-    score += {0: 0, 1: 6}.get(cirrhosis, 0)
-    score += {0: 0, 1: 11}.get(portal_hyp, 0)
-    score += {1: 0, 2: 1, 3: 10}.get(int(hepar_gpc_catv2), 0)
+    score += {False: 0, True: 6}.get(cirrhosis, 0)
+    score += {False: 0, True: 11}.get(portal_hyp, 0)
+    
+    # Calculate Hepar/GPC category score
+    if hepar == "high" and gpc == "negative":
+        score += 0
+    elif (hepar == "high" and gpc == "positive") or (hepar == "low" and gpc == "negative"):
+        score += 1
+    elif hepar == "low" and gpc == "positive":
+        score += 10
+    
     score += -3 * round(int(r_rpa) / 10)
     return score
-
-# Define the function to get the associated risk probabilities
-def get_risk_probabilities(score, prob_data):
-    if score in prob_data['Risk Score'].values:
-        risk_3yr = prob_data[prob_data['Risk Score'] == score]['Predicted 3-Year Probability of Death (%)'].values[0]
-        risk_5yr = prob_data[prob_data['Risk Score'] == score]['Predicted 5-Year Probability of Death (%)'].values[0]
-        survival_3yr = 100 - risk_3yr
-        survival_5yr = 100 - risk_5yr
-        return risk_3yr, risk_5yr, survival_3yr, survival_5yr
-    else:
-        return "Score out of range.", "Score out of range.", "Score out of range.", "Score out of range."
 
 # Streamlit app
 st.title("HCC Overall Survival Probability Calculator")
 
 st.header("Input Parameters")
-study_grade_who = st.selectbox("Study Grade WHO", [1, 2, 3])
+
+# Updated user-friendly inputs
+who_grade = st.selectbox("WHO Grade", [1, 2, 3])
 tstage = st.selectbox("T Stage", [1, 2, 3, 4])
-cirrhosis = st.selectbox("Cirrhosis", [0, 1])
-portal_hyp = st.selectbox("Portal Hypertension", [0, 1])
-hepar_gpc_catv2 = st.selectbox("Hepar/GPC Category", [1, 2, 3])
-r_rpa = st.slider("r-RPA (100-reticloss pct)", 0, 100, 0, 1)
+cirrhosis = st.selectbox("Cirrhosis", ["No", "Yes"]) == "Yes"
+portal_hyp = st.selectbox("Portal Hypertension", ["No", "Yes"]) == "Yes"
+hepar = st.selectbox("Hepar", ["high", "low"])
+gpc = st.selectbox("GPC", ["negative", "positive"])
+r_rpa = st.slider("r-RPA %", 0, 100, 0, 1)
 
 # Calculate the risk score
-risk_score = calculate_risk_score(study_grade_who, tstage, cirrhosis, portal_hyp, hepar_gpc_catv2, r_rpa)
+risk_score = calculate_risk_score(who_grade, tstage, cirrhosis, portal_hyp, hepar, gpc, r_rpa)
 
 # Get the associated risk and survival probabilities
 risk_3yr, risk_5yr, survival_3yr, survival_5yr = get_risk_probabilities(risk_score, prob_data)
