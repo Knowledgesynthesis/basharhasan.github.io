@@ -1,6 +1,6 @@
-# 5 Year Rec-Met Risk Prediction Calculator
+# Rec-Met Risk Prediction Calculator
 
-This is a Streamlit web application for predicting the risk of recurrence/metastasis at 5 years.
+This is a Streamlit web application for predicting the risk of recurrence/metastasis at 3 and 5 years.
 
 ## Running the App Locally
 
