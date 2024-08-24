@@ -11,7 +11,7 @@ data = {
 
 prob_data = pd.DataFrame(data)
 
-# Define the scoring function with the updated user-friendly interface
+# Define the scoring function
 def calculate_risk_score(who_grade, tstage, cirrhosis, portal_hyp, hepar, gpc, r_rpa):
     score = 0
     score += {1: 0, 2: 11, 3: 34}.get(who_grade, 0)
