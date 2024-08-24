@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-# Probability data for risk scores (directly added from the CSV)
+# Probability data for risk scores
 data = {
     'Risk Score': [-20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
     'Predicted 3-Year Probability of Any Event (%)': [1.68, 1.979, 2.329, 2.74, 3.22, 3.782, 4.437, 5.2, 6.085, 7.11, 8.292, 9.65, 11.203, 12.971, 14.97, 17.216, 19.722, 22.493, 25.529, 28.823, 32.357, 36.105, 40.03, 44.088, 48.225, 52.388, 56.517, 60.558, 64.46, 68.178, 71.678, 74.935, 77.933, 80.664, 83.131, 85.34, 87.304, 89.039, 90.562, 91.893, 93.051, 94.054, 94.92, 95.666, 96.306, 96.855, 97.325, 97.726, 98.068, 98.36, 98.608, 98.819, 98.999, 99.151, 99.28, 99.39, 99.483, 99.562, 99.629, 99.686, 99.734, 99.775, 99.809, 99.838, 99.863, 99.884],
@@ -11,7 +11,7 @@ data = {
 
 prob_data = pd.DataFrame(data)
 
-# Define the scoring function with the updated user-friendly interface
+# Define the scoring function
 def calculate_risk_score(who_grade, tstage, multifocality, nuclear_area, r_rpa, hepar, gpc):
     score = 0
     # WHO Grade
