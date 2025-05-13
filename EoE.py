@@ -1,9 +1,10 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
+import altair as alt
 from sklearn.linear_model import LogisticRegression
 
 # Define logistic regression coefficients from final trained models (assumed refit values)
-# These are representative values based on previous logistic fits
 coef_str = [0.065]  # per unit risk score (stricture)
 intercept_str = -4.5
 
@@ -13,7 +14,7 @@ intercept_dil = -4.2
 coef_rng = [0.05]  # per unit risk score (rings)
 intercept_rng = -2.5
 
-# Risk scoring logic (same point system from previous steps)
+# Risk scoring logic
 def calculate_scores(age, disease_duration, eosinophils, fibrosis_score):
     age_scaled = min(age // 10, 8)
     duration_scaled = min(disease_duration, 15)
@@ -51,3 +52,37 @@ if st.button("Calculate"):
     st.write(f"**Stricture:** {p_str:.2%} (Score: {score_str})")
     st.write(f"**Stricture + Dilation:** {p_dil:.2%} (Score: {score_dil})")
     st.write(f"**Rings:** {p_rng:.2%} (Score: {score_rng})")
+
+    # Plotting interactive probability curve
+    st.header("Risk Probability Plot")
+    score_range = np.arange(0, 601, 1)
+    prob_df = pd.DataFrame({
+        'Risk Score': score_range,
+        'Stricture': predict_probability(score_range, coef_str, intercept_str),
+        'Stricture + Dilation': predict_probability(score_range, coef_dil, intercept_dil),
+        'Rings': predict_probability(score_range, coef_rng, intercept_rng)
+    })
+
+    melted = prob_df.melt(id_vars='Risk Score', var_name='Outcome', value_name='Probability')
+
+    base = alt.Chart(melted).mark_line().encode(
+        x='Risk Score',
+        y='Probability',
+        color='Outcome'
+    ).properties(
+        title='Probability of Fibrostenotic Outcomes by Risk Score'
+    )
+
+    dots = alt.Chart(pd.DataFrame({
+        'Risk Score': [score_str, score_dil, score_rng],
+        'Probability': [p_str, p_dil, p_rng],
+        'Outcome': ['Stricture', 'Stricture + Dilation', 'Rings']
+    })).mark_point(size=100).encode(
+        x='Risk Score',
+        y='Probability',
+        color='Outcome',
+        tooltip=['Outcome', 'Risk Score', 'Probability']
+    )
+
+    chart = base + dots
+    st.altair_chart(chart, use_container_width=True)
