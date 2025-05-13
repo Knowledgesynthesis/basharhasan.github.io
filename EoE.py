@@ -35,7 +35,7 @@ age = st.slider("Age (years)", 0, 80, 25)
 duration = st.slider("Disease duration (years)", 0, 15, 3)
 eos = st.slider("Eosinophils per HPF", 0, 100, 40)
 fib = st.slider("AI Fibrosis Score", 0, 300, 60)
-remodel = st.slider("Remodeling Score 3 (Fib x Basal %)", 0, 5000, 1000)
+remodel = st.slider("Remodeling Score 3 (Fib score x Basal %)", 0, 5000, 1000)
 
 score_str, score_dil, score_rng = calculate_scores(age, duration, eos, fib, remodel)
 p_str = predict_probability(score_str, coef_str, intercept_str)
